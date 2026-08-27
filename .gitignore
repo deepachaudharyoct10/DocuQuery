@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+backend/node_modules/
+
+# backend build output
+backend/dist/
+
+# env files (keep .env.example tracked)
+.env
+.env.local
+backend/.env
+frontend/.env*
+!.env.example
+!**/.env.example
+
+# logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
