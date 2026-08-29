@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 
 import { env } from "./config/env";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
+import { documentRoutes } from "./routes/document.routes";
 import { logger } from "./utils/logger";
 
 async function main() {
@@ -21,7 +22,9 @@ async function main() {
     res.json({ status: "ok", env: env.NODE_ENV });
   });
 
-  // Route modules (documents, chat, contradictions) get mounted here as they're built.
+  app.use("/api/documents", documentRoutes);
+
+  // Route modules for chat and contradictions get mounted here as they're built.
 
   app.use(notFoundHandler);
   app.use(errorHandler);
