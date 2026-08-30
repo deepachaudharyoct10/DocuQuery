@@ -1,6 +1,8 @@
 import { ConversationModel } from "../models/conversation.model";
+import { detectContradictions } from "./contradiction.service";
 import { embedText } from "./embedding.service";
 import { generateAnswer, type ChatHistoryItem, type Citation } from "./generation.service";
+import { logger } from "../utils/logger";
 import { searchSimilarChunks, type SimilarChunk } from "./vector.service";
 
 const TOP_K = 5;
@@ -33,6 +35,11 @@ export async function askQuestion(question: string, conversationId?: string): Pr
   conversation.messages.push({ role: "user", content: question, citations: [] });
   conversation.messages.push({ role: "assistant", content: answer, citations });
   await conversation.save();
+
+  // Fire-and-forget: don't block the chat response on contradiction judging.
+  detectContradictions(retrievedChunks, question).catch((err) => {
+    logger.error("Contradiction detection failed", { err: err instanceof Error ? err.message : err });
+  });
 
   return {
     conversationId: conversation.id,
