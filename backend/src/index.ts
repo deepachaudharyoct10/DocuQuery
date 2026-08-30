@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 
 import { env } from "./config/env";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
+import { chatRoutes, conversationRoutes } from "./routes/chat.routes";
 import { documentRoutes } from "./routes/document.routes";
 import { logger } from "./utils/logger";
 
@@ -23,8 +24,10 @@ async function main() {
   });
 
   app.use("/api/documents", documentRoutes);
+  app.use("/api/chat", chatRoutes);
+  app.use("/api/conversations", conversationRoutes);
 
-  // Route modules for chat and contradictions get mounted here as they're built.
+  // Contradiction routes get mounted here once built.
 
   app.use(notFoundHandler);
   app.use(errorHandler);
