@@ -6,8 +6,8 @@ import { logger } from "../utils/logger";
 const qdrant = new QdrantClient({ url: env.QDRANT_URL, apiKey: env.QDRANT_API_KEY });
 
 const COLLECTION = env.QDRANT_COLLECTION;
-/** text-embedding-004 outputs 768-dimensional vectors. */
-const VECTOR_SIZE = 768;
+/** gemini-embedding-001 outputs 3072-dimensional vectors. */
+const VECTOR_SIZE = 3072;
 
 export interface ChunkPayload {
   documentId: string;
@@ -45,6 +45,11 @@ export async function ensureCollection(): Promise<void> {
     await qdrant.createCollection(COLLECTION, {
       vectors: { size: VECTOR_SIZE, distance: "Cosine" },
     });
+    // Filtering/deleting by documentId requires a payload index on that field.
+    await qdrant.createPayloadIndex(COLLECTION, {
+      field_name: "documentId",
+      field_schema: "keyword",
+    });
     logger.info("Created Qdrant collection", { collection: COLLECTION });
   }
 
@@ -67,14 +72,14 @@ export async function searchSimilarChunks(
 ): Promise<SimilarChunk[]> {
   await ensureCollection();
 
-  const results = await qdrant.search(COLLECTION, {
-    vector,
+  const { points } = await qdrant.query(COLLECTION, {
+    query: vector,
     limit,
     filter,
     with_payload: true,
   });
 
-  return results.map((r) => ({
+  return points.map((r) => ({
     id: String(r.id),
     score: r.score,
     payload: r.payload as unknown as ChunkPayload,

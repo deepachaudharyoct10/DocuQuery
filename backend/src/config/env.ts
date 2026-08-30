@@ -16,8 +16,8 @@ const envSchema = z.object({
   CLOUDINARY_API_SECRET: z.string().min(1, "CLOUDINARY_API_SECRET is required"),
 
   GEMINI_API_KEY: z.string().min(1, "GEMINI_API_KEY is required"),
-  GEMINI_CHAT_MODEL: z.string().default("gemini-1.5-flash"),
-  GEMINI_EMBEDDING_MODEL: z.string().default("text-embedding-004"),
+  GEMINI_CHAT_MODEL: z.string().default("gemini-3.5-flash"),
+  GEMINI_EMBEDDING_MODEL: z.string().default("gemini-embedding-001"),
 
   MAX_UPLOAD_SIZE_MB: z.string().default("20"),
   FRONTEND_ORIGIN: z.string().default("http://localhost:3000"),
