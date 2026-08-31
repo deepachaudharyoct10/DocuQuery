@@ -61,7 +61,11 @@ export async function upsertChunks(points: ChunkPoint[]): Promise<void> {
   await ensureCollection();
 
   await qdrant.upsert(COLLECTION, {
-    points: points.map((p) => ({ id: p.id, vector: p.vector, payload: p.payload })),
+    points: points.map((p) => ({
+      id: p.id,
+      vector: p.vector,
+      payload: p.payload as unknown as Record<string, unknown>,
+    })),
   });
 }
 
